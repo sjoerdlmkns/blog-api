@@ -22,7 +22,7 @@ async function bootstrap() {
       'MIT License',
       'https://gist.githubusercontent.com/adamveld12/b64e74d14d7d9043b85c/raw/2d4cf3afe445b79c3b496ce67e9d2ab3365232dd/LICENSE.txt',
     )
-    .addServer('http:localhost:3000')
+    .addServer('http://localhost:3000')
     .setVersion('1.0')
     .build();
 
