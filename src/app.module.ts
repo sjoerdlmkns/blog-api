@@ -9,6 +9,7 @@ import { User } from './users/user.entity';
 import { Post } from './posts/post.entity';
 import { TagsModule } from './tags/tags.module';
 import { Tag } from './tags/tag.entity';
+import { MetaOptionsModule } from './meta-options/meta-options.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { Tag } from './tags/tag.entity';
         database: 'nestjs-blog',
       }),
     }),
+    MetaOptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
