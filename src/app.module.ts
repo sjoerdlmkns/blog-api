@@ -8,18 +8,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/user.entity';
 import { Post } from './posts/post.entity';
 import { TagsModule } from './tags/tags.module';
+import { Tag } from './tags/tag.entity';
 
 @Module({
   imports: [
     UsersModule,
     PostsModule,
     AuthModule,
+    TagsModule,
     TypeOrmModule.forRootAsync({
       imports: [],
       inject: [],
       useFactory: () => ({
         type: 'postgres',
-        entities: [User, Post],
+        entities: [User, Post, Tag],
         synchronize: true,
         port: 5432,
         username: 'postgres',
@@ -28,7 +30,6 @@ import { TagsModule } from './tags/tags.module';
         database: 'nestjs-blog',
       }),
     }),
-    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
