@@ -10,7 +10,7 @@ export class Post {
 
   @Column({
     type: 'varchar',
-    length: 96,
+    length: 512,
     nullable: false,
   })
   title: string;
@@ -19,50 +19,52 @@ export class Post {
     type: 'enum',
     enum: postType,
     nullable: false,
+    default: postType.POST,
   })
   postType: postType;
 
   @Column({
     type: 'varchar',
-    length: 96,
+    length: 256,
     nullable: false,
+    unique: true,
   })
   slug: string;
 
   @Column({
     type: 'enum',
-    enum: postType,
+    enum: postStatus,
     nullable: false,
+    default: postStatus.DRAFT,
   })
   status: postStatus;
 
   @Column({
-    type: 'varchar',
-    length: 96,
+    type: 'text',
     nullable: true,
   })
   content?: string;
 
   @Column({
-    type: 'json',
+    type: 'text',
     nullable: true,
   })
   schema?: string;
 
   @Column({
     type: 'varchar',
-    length: 96,
+    length: 1024,
     nullable: true,
   })
   featuredImageUrl?: string;
 
   @Column({
-    type: 'date',
+    type: 'timestamp',
     nullable: true,
   })
   publishOn?: Date;
 
+  // TODO: Fix relationships later.
   tags?: string[];
-
   metaOptions?: CreatePostMetaOptionsDto[];
 }
