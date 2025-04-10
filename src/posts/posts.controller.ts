@@ -26,9 +26,7 @@ export class PostsController {
     description: 'You get a 201 response if your post is created successfully',
   })
   public createPost(@Body() createPostDto: CreatePostDto) {
-    console.log('Create posts controller');
-    console.log(createPostDto);
-    return 'Created post';
+    return this.postsService.create(createPostDto);
   }
 
   @Patch()
