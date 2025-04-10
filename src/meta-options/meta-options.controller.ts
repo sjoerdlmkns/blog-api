@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreatePostMetaOptionsDto } from './dtos/create-post-meta-options.dto';
-import { MetaOptionsService } from './meta-options.service';
+import { MetaOptionsService } from './providers/meta-options.service';
 
 @Controller('meta-options')
 export class MetaOptionsController {
