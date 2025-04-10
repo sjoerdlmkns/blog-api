@@ -16,9 +16,7 @@ export class MetaOptionsController {
     description:
       'You get a 201 response if your meta option is created successfully',
   })
-  public createMetaOptions(
-    @Body() createMetaOptionsDto: CreatePostMetaOptionsDto,
-  ) {
-    console.log(createMetaOptionsDto);
+  public create(@Body() createPostMetaOptionsDto: CreatePostMetaOptionsDto) {
+    return this.metaOptionsService.create(createPostMetaOptionsDto);
   }
 }
