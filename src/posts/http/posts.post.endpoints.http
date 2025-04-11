@@ -16,5 +16,6 @@ Content-Type: application/json
   // ],
   "metaOptions": {
      "metaValue": "{\"sidebarEnabled\": true, \"footerActive\": true}"
-  } 
+  } ,
+  "auhtorId": 1
 }

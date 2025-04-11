@@ -22,7 +22,12 @@ export class PostsService {
   ) {}
 
   public async create(@Body() createPostDto: CreatePostDto) {
-    const post = this.postsRepository.create(createPostDto);
+    const author = await this.usersService.findOneById(createPostDto.authorId);
+
+    const post = this.postsRepository.create({
+      ...createPostDto,
+      author,
+    });
 
     return await this.postsRepository.save(post);
   }
