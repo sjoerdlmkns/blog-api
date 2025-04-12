@@ -37,6 +37,7 @@ export class CreateTagDto {
   description?: string;
 
   @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
   @IsJSON()
   schema?: string;
