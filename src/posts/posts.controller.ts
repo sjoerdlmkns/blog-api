@@ -47,8 +47,8 @@ export class PostsController {
     status: 200,
     description: 'A 200 response if the post is updated successfully.',
   })
-  public updatePost(@Body() patchPostsDto: PatchPostDto) {
-    console.log(patchPostsDto);
+  public updatePost(@Body() patchPostDto: PatchPostDto) {
+    return this.postsService.update(patchPostDto);
   }
 
   @Delete()
