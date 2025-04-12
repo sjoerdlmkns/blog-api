@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Post } from '../post.entity';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
+import { TagsService } from 'src/tags/providers/tags.service';
 
 @Injectable()
 export class PostsService {
@@ -19,14 +20,19 @@ export class PostsService {
     // Injecting MetaOption Repository
     @InjectRepository(MetaOption)
     private readonly metaOptionRepository: Repository<MetaOption>,
+
+    // Injecting TagsService
+    private readonly tagsService: TagsService,
   ) {}
 
   public async create(@Body() createPostDto: CreatePostDto) {
     const author = await this.usersService.findOneById(createPostDto.authorId);
+    const tags = await this.tagsService.findMultipleTags(createPostDto.tags);
 
     const post = this.postsRepository.create({
       ...createPostDto,
       author,
+      tags,
     });
 
     return await this.postsRepository.save(post);
