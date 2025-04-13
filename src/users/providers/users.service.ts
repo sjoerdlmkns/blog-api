@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   RequestTimeoutException,
@@ -63,7 +65,17 @@ export class UsersService {
 
     // Create new user
     let newUser = this.usersRepository.create(createUserDto);
-    newUser = await this.usersRepository.save(newUser);
+
+    try {
+      newUser = await this.usersRepository.save(newUser);
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
 
     return newUser;
   }
@@ -76,29 +88,40 @@ export class UsersService {
     limit: number,
     page: number,
   ) {
-    // Test the new config
-    console.log(this.profileConfiguration);
-    console.log(this.profileConfiguration.apiKey);
-
-    const isAuth = this.authService.isAuth();
-    console.log(isAuth);
-    // Auth service
-    return [
+    throw new HttpException(
       {
-        firstName: 'John',
-        email: 'john@doe.com',
+        status: HttpStatus.MOVED_PERMANENTLY,
+        error: 'The api endpoint does not exist',
+        fileName: 'users.service.ts',
+        lineNumber: 88,
       },
+      HttpStatus.MOVED_PERMANENTLY,
       {
-        firstName: 'Alice',
-        email: 'alice@doe.com',
+        description: 'Occured because the API endpoint was permanently moved',
       },
-    ];
+    );
   }
 
   /**
    * Find a single users by the ID of the user
    */
   public async findOneById(id: number) {
-    return await this.usersRepository.findOneBy({ id });
+    let user = undefined;
+    try {
+      user = await this.usersRepository.findOneBy({ id });
+    } catch (error) {
+      throw new RequestTimeoutException(
+        'Unable to process your request at the moment please try later',
+        {
+          description: 'Error connecting to the database',
+        },
+      );
+    }
+
+    if (!user) {
+      throw new BadRequestException('The user id does not exist');
+    }
+
+    return user;
   }
 }
