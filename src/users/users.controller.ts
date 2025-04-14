@@ -59,7 +59,7 @@ export class UsersController {
     return this.usersService.createUser(createUserDto);
   }
 
-  @Post()
+  @Post('create-many')
   public createManyUsers(@Body() createUsersDto: CreateUserDto[]) {
     return this.usersService.createMany(createUsersDto);
   }
