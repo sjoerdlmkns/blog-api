@@ -12,6 +12,7 @@ import { CreatePostDto } from '../dtos/create-post.dto';
 import { MetaOption } from 'src/meta-options/meta-option.entity';
 import { TagsService } from 'src/tags/providers/tags.service';
 import { PatchPostDto } from '../dtos/patch-post.dto';
+import { GetPostsDto } from '../dtos/get-posts.dto';
 
 @Injectable()
 export class PostsService {
@@ -44,13 +45,10 @@ export class PostsService {
     return await this.postsRepository.save(post);
   }
 
-  public async findAll(userId: string) {
+  public async findAll(postQuery: GetPostsDto, userId: string) {
     const posts = await this.postsRepository.find({
-      relations: {
-        metaOptions: true,
-        // author: true,
-        // tags: true,
-      },
+      skip: (postQuery.page - 1) * postQuery.limit,
+      take: postQuery.limit,
     });
 
     return posts;
