@@ -1,18 +1,28 @@
-import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './auth/guards/access-token/access-token.guard';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TagsModule } from './tags/tags.module';
+import { JwtModule } from '@nestjs/jwt';
 import { MetaOptionsModule } from './meta-options/meta-options.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Module } from '@nestjs/common';
 import { PaginationModule } from './common/pagination/pagination.module';
+import { PostsModule } from './posts/posts.module';
+import { TagsModule } from './tags/tags.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+/**
+ * Importing Entities
+ * */
+import { UsersModule } from './users/users.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import environmentValidation from './config/environment.validation';
+import jwtConfig from './auth/config/jwt.config';
 
+// Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
 
 @Module({
@@ -20,9 +30,9 @@ const ENV = process.env.NODE_ENV;
     UsersModule,
     PostsModule,
     AuthModule,
-    TagsModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      //envFilePath: ['.env.development', '.env'],
       envFilePath: !ENV ? '.env' : `.env.${ENV}`,
       load: [appConfig, databaseConfig],
       validationSchema: environmentValidation,
@@ -32,21 +42,29 @@ const ENV = process.env.NODE_ENV;
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        autoLoadEntities: configService.get<boolean>(
-          'database.autoLoadEntities',
-        ),
-        synchronize: configService.get<boolean>('database.synchronize'),
-        port: +configService.get<string>('database.port'),
-        username: configService.get<string>('database.user'),
-        password: configService.get<string>('database.password'),
-        host: configService.get<string>('database.host'),
-        database: configService.get<string>('database.name'),
+        //entities: [User],
+        synchronize: configService.get('database.synchronize'),
+        port: configService.get('database.port'),
+        username: configService.get('database.user'),
+        password: configService.get('database.password'),
+        host: configService.get('database.host'),
+        autoLoadEntities: configService.get('database.autoLoadEntities'),
+        database: configService.get('database.name'),
       }),
     }),
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+    TagsModule,
     MetaOptionsModule,
     PaginationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+  ],
 })
 export class AppModule {}
