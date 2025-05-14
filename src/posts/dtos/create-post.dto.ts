@@ -2,9 +2,9 @@ import { postType } from '../enums/postType.enum';
 import { postStatus } from '../enums/postStatus.enum';
 import {
   IsArray,
+  IsDate,
   IsEnum,
   IsInt,
-  IsISO8601,
   IsJSON,
   IsNotEmpty,
   IsOptional,
@@ -90,7 +90,7 @@ export class CreatePostDto {
     description: 'The date on which the blog post is published',
     example: '2024-03-16T07:46:32+0000',
   })
-  @IsISO8601()
+  @IsDate()
   @IsOptional()
   publishOn?: Date;
 
