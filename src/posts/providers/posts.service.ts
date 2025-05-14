@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
-  Body,
   Injectable,
   RequestTimeoutException,
 } from '@nestjs/common';
@@ -15,6 +15,8 @@ import { PatchPostDto } from '../dtos/patch-post.dto';
 import { GetPostsDto } from '../dtos/get-posts.dto';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 import { Paginated } from 'src/common/pagination/interfaces/paginated.interface';
+import { CreatePostProvider } from './create-post.provider';
+import { ActiveUserData } from 'src/auth/interfaces/active-user-data.interface';
 
 @Injectable()
 export class PostsService {
@@ -35,19 +37,13 @@ export class PostsService {
 
     // Injecting PaginationProvider
     private readonly paginationProvider: PaginationProvider,
+
+    // Injecting CreatePostProvider
+    private readonly createPostProvider: CreatePostProvider,
   ) {}
 
-  public async create(@Body() createPostDto: CreatePostDto) {
-    const author = await this.usersService.findOneById(createPostDto.authorId);
-    const tags = await this.tagsService.findMultipleTags(createPostDto.tags);
-
-    const post = this.postsRepository.create({
-      ...createPostDto,
-      author,
-      tags,
-    });
-
-    return await this.postsRepository.save(post);
+  public async create(createPostDto: CreatePostDto, user: ActiveUserData) {
+    return await this.createPostProvider.create(createPostDto, user);
   }
 
   public async findAll(
