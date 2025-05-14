@@ -21,6 +21,7 @@ import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import environmentValidation from './config/environment.validation';
 import jwtConfig from './auth/config/jwt.config';
+import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
 
 // Get the current NODE_ENV
 const ENV = process.env.NODE_ENV;
@@ -63,8 +64,9 @@ const ENV = process.env.NODE_ENV;
     AppService,
     {
       provide: APP_GUARD,
-      useClass: AccessTokenGuard,
+      useClass: AuthenticationGuard,
     },
+    AccessTokenGuard,
   ],
 })
 export class AppModule {}
