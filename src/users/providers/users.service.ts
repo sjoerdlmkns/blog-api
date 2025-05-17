@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   forwardRef,
@@ -19,6 +20,8 @@ import { UsersCreateManyProvider } from './users-create-many.provider';
 import { CreateManyUsersDto } from '../dtos/create-many-users.dto.';
 import { CreateUserProvider } from './create-user.provider';
 import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
+import { CreateGoogleUserProvider } from './create-google-user.provider';
+import { GoogleUser } from '../interfaces/google-user.interface';
 
 /**
  * Class to connect to Users table and perform business operations
@@ -48,6 +51,12 @@ export class UsersService {
 
     // Inject findOneUserByEmailProvider
     private readonly findOneUserEmailProvider: FindOneUserByEmailProvider,
+
+    // Inject FindOneByGoogleIdProvider
+    private readonly findOneByGoogleIdProvider,
+
+    // Inject create google user provider
+    private readonly createGoogleProvider: CreateGoogleUserProvider,
   ) {}
 
   public createUser(createUserDto: CreateUserDto) {
@@ -105,5 +114,13 @@ export class UsersService {
 
   public async findOneByEmail(email: string) {
     return await this.findOneUserEmailProvider.findOneByEmail(email);
+  }
+
+  public async findOneByGoogleId(googleId: string) {
+    return await this.findOneByGoogleIdProvider.findOneByGoogleId(googleId);
+  }
+
+  public async createGoogleUser(googleUser: GoogleUser) {
+    return await this.createGoogleProvider.createGoogleUser(googleUser);
   }
 }
