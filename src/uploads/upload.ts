@@ -30,7 +30,6 @@ export class Upload {
     type: 'enum',
     enum: fileTypes,
     default: fileTypes.IMAGE,
-    length: 1024,
     nullable: false,
   })
   type: string;

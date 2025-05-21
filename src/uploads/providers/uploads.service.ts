@@ -43,7 +43,7 @@ export class UploadsService {
       // Generate to a new entry in database
       const uploadFile: UploadFile = {
         name,
-        path: `https://${this.configService.get('appConfig.awsCloudFrontUrl')}/${name}`,
+        path: `${this.configService.get('appConfig.awsCloudFrontUrl')}/${name}`,
         type: fileTypes.IMAGE,
         mime: file.mimetype,
         size: file.size,
