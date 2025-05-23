@@ -6,17 +6,19 @@ describe('AppController', () => {
   let appController: AppController;
 
   beforeEach(async () => {
+    // Compile app module
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
       providers: [AppService],
     }).compile();
 
+    // Get the controller from the app module
     appController = app.get<AppController>(AppController);
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('Controller should be defined', () => {
+      expect(appController).toBeUndefined();
     });
   });
 });

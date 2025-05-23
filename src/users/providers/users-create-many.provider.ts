@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   ConflictException,
   Injectable,
@@ -5,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { User } from '../user.entity';
 import { DataSource } from 'typeorm';
-import { CreateManyUsersDto } from '../dtos/create-many-users.dto.';
+import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
 
 @Injectable()
 export class UsersCreateManyProvider {

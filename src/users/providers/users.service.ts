@@ -1,107 +1,116 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { CreateUserDto } from './../dtos/create-user.dto';
+import { DataSource, Repository } from 'typeorm';
+import { GetUsersParamDto } from '../dtos/get-users-param.dto';
 import {
   BadRequestException,
-  forwardRef,
   HttpException,
   HttpStatus,
   Inject,
   Injectable,
   RequestTimeoutException,
+  forwardRef,
 } from '@nestjs/common';
-import { GetUsersParamDto } from '../dtos/get-users-param.dto';
-import { AuthService } from 'src/auth/providers/auth.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
 import { User } from '../user.entity';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { ConfigType } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService, ConfigType } from '@nestjs/config';
 import profileConfig from '../config/profile.config';
 import { UsersCreateManyProvider } from './users-create-many.provider';
-import { CreateManyUsersDto } from '../dtos/create-many-users.dto.';
+import { CreateManyUsersDto } from '../dtos/create-many-users.dto';
 import { CreateUserProvider } from './create-user.provider';
 import { FindOneUserByEmailProvider } from './find-one-user-by-email.provider';
+import { FindOneByGoogleIdProvider } from './find-one-by-google-id.provider';
 import { CreateGoogleUserProvider } from './create-google-user.provider';
 import { GoogleUser } from '../interfaces/google-user.interface';
-import { FindOneByGoogleIdProvider } from './find-one-by-google-id.provider';
 
 /**
- * Class to connect to Users table and perform business operations
+ * Controller class for '/users' API endpoint
  */
 @Injectable()
 export class UsersService {
   constructor(
-    // Injecting Auth service
-    @Inject(forwardRef(() => AuthService))
-    private readonly authService: AuthService,
-
-    // Injecting Users Repository
+    /**
+     * Injecting usersRepository
+     */
     @InjectRepository(User)
-    private readonly usersRepository: Repository<User>,
+    private usersRepository: Repository<User>,
 
-    @Inject(profileConfig.KEY)
-    private readonly profileConfiguration: ConfigType<typeof profileConfig>,
-
-    // Inject data source
-    private readonly dataSource: DataSource,
-
-    /// Inject usersCreateManyProvider
+    /**
+     * Inject UsersCreateMany provider
+     */
     private readonly usersCreateManyProvider: UsersCreateManyProvider,
-
-    // Inject createUserProvider
+    /**
+     * Inject Create Users Provider
+     */
     private readonly createUserProvider: CreateUserProvider,
 
-    // Inject findOneUserByEmailProvider
-    private readonly findOneUserEmailProvider: FindOneUserByEmailProvider,
+    /**
+     * Inject findOneUserByEmailProvider
+     */
+    private readonly findOneUserByEmailProvider: FindOneUserByEmailProvider,
 
-    // Inject FindOneByGoogleIdProvider
+    /**
+     * Inject findOneByGoogleIdProvider
+     */
     private readonly findOneByGoogleIdProvider: FindOneByGoogleIdProvider,
-
-    // Inject create google user provider
-    private readonly createGoogleProvider: CreateGoogleUserProvider,
+    /**
+     * Inject createGooogleUserProvider
+     */
+    private readonly createGooogleUserProvider: CreateGoogleUserProvider,
   ) {}
 
-  public createUser(createUserDto: CreateUserDto) {
-    return this.createUserProvider.createUser(createUserDto);
+  /**
+   * Method to create a new user
+   */
+  public async createUser(createUserDto: CreateUserDto) {
+    return await this.createUserProvider.createUser(createUserDto);
   }
 
   /**
-   * The method to get all users from the database
+   * Public method responsible for handling GET request for '/users' endpoint
    */
   public findAll(
     getUserParamDto: GetUsersParamDto,
-    limit: number,
+    limt: number,
     page: number,
   ) {
     throw new HttpException(
       {
         status: HttpStatus.MOVED_PERMANENTLY,
-        error: 'The api endpoint does not exist',
+        error: 'The API endpoint does not exist',
         fileName: 'users.service.ts',
         lineNumber: 88,
       },
       HttpStatus.MOVED_PERMANENTLY,
       {
+        cause: new Error(),
         description: 'Occured because the API endpoint was permanently moved',
       },
     );
   }
 
   /**
-   * Find a single users by the ID of the user
+   * Public method used to find one user using the ID of the user
    */
   public async findOneById(id: number) {
     let user = undefined;
+
     try {
-      user = await this.usersRepository.findOneBy({ id });
+      user = await this.usersRepository.findOneBy({
+        id,
+      });
     } catch (error) {
       throw new RequestTimeoutException(
         'Unable to process your request at the moment please try later',
         {
-          description: 'Error connecting to the database',
+          description: 'Error connecting to the the datbase',
         },
       );
     }
 
+    /**
+     * Handle the user does not exist
+     */
     if (!user) {
       throw new BadRequestException('The user id does not exist');
     }
@@ -113,8 +122,9 @@ export class UsersService {
     return await this.usersCreateManyProvider.createMany(createManyUsersDto);
   }
 
+  // Finds one user by email
   public async findOneByEmail(email: string) {
-    return await this.findOneUserEmailProvider.findOneByEmail(email);
+    return await this.findOneUserByEmailProvider.findOneByEmail(email);
   }
 
   public async findOneByGoogleId(googleId: string) {
@@ -122,6 +132,6 @@ export class UsersService {
   }
 
   public async createGoogleUser(googleUser: GoogleUser) {
-    return await this.createGoogleProvider.createGoogleUser(googleUser);
+    return await this.createGooogleUserProvider.createGoogleUser(googleUser);
   }
 }
