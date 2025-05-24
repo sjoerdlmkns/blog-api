@@ -1,11 +1,14 @@
+import * as request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { dropDatabase } from 'test/helpers/drop-database.helper';
 import { bootstrapNestApplication } from 'test/helpers/bootstrap-nest-application.helper';
+import { App } from 'supertest/types';
 
 describe('[Users] @Post Endpoints', () => {
   let app: INestApplication;
   let config: ConfigService;
+  let httpServer: App;
 
   beforeEach(async () => {
     // Instantiating the application
@@ -13,6 +16,9 @@ describe('[Users] @Post Endpoints', () => {
 
     // Extract config
     config = app.get<ConfigService>(ConfigService);
+
+    // Extract http server
+    httpServer = app.getHttpServer();
   });
 
   afterEach(async () => {
@@ -20,7 +26,16 @@ describe('[Users] @Post Endpoints', () => {
     await app.close();
   });
 
-  it.todo('/users - Endpoint is public');
+  it('/users - Endpoint is public', () => {
+    return request(httpServer)
+      .post('/users')
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        console.log(body);
+      });
+  });
+
   it.todo('/users - firstName is mandatory');
   it.todo('/users - email is mandatory');
   it.todo('/users - password is mandatory');
