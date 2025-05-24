@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { dropDatabase } from 'test/helpers/drop-database.helper';
 import { bootstrapNestApplication } from 'test/helpers/bootstrap-nest-application.helper';
 import { App } from 'supertest/types';
+import { completeUser } from './user.post.e2e-spec.sample-data';
 
 describe('[Users] @Post Endpoints', () => {
   let app: INestApplication;
@@ -27,13 +28,8 @@ describe('[Users] @Post Endpoints', () => {
   });
 
   it('/users - Endpoint is public', () => {
-    return request(httpServer)
-      .post('/users')
-      .send({})
-      .expect(400)
-      .then(({ body }) => {
-        console.log(body);
-      });
+    console.log(completeUser);
+    return request(httpServer).post('/users').send({}).expect(400);
   });
 
   it.todo('/users - firstName is mandatory');
